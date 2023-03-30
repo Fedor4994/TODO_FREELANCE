@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import * as S from "./styles";
 
-import { TaskProps } from "../../Contexts/taskType";
-
 const AddModal: React.FC = () => {
   const categList = [
     {
@@ -24,32 +22,21 @@ const AddModal: React.FC = () => {
   ];
 
   const [taskName, setTaskName] = useState("");
-  const [taskCat, setTaskCat] = useState(
-    categList.findIndex((cat) => cat.name == "None")
-  );
 
   function handleTyping(event: React.ChangeEvent<HTMLInputElement>) {
     setTaskName(event.target.value);
   }
 
   function handleCancel() {
-    console.log(123);
+    console.log("cancel");
   }
 
   function handleAdd() {
-    const newTask: TaskProps = {
-      id: Math.random(),
-      title: taskName,
-      categorie: categList[taskCat].name,
-      color: categList[taskCat].color,
-      done: false,
-    };
+    console.log("add task");
   }
 
-  var e = document.getElementById("select") as HTMLSelectElement;
-
   function handleChange() {
-    setTaskCat(Number(e.options[e.selectedIndex].value));
+    console.log("change category");
   }
 
   return (
@@ -64,7 +51,9 @@ const AddModal: React.FC = () => {
         <S.Text>Select a categorie</S.Text>
         <S.Select id="select" onChange={handleChange}>
           {categList.map((cat) => (
-            <option value={cat.id}>{cat.name}</option>
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
           ))}
         </S.Select>
         <S.Buttons>
