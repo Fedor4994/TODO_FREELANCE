@@ -1,13 +1,22 @@
-import React from "react";
 import * as S from "./styles";
+import { useAppDispatch } from "../../Redux/store";
+import { deleteTodo } from "../../Redux/todos/todos-operations";
 
-const DeleteModal: React.FC = () => {
+const DeleteModal = ({
+  todoId,
+  modalHandler,
+}: {
+  todoId: string;
+  modalHandler: (isOpen: boolean) => void;
+}) => {
+  const dispatch = useAppDispatch();
+
   function handleCancel() {
-    console.log(123);
+    modalHandler(false);
   }
 
   function handleConfirm() {
-    console.log(123);
+    dispatch(deleteTodo(todoId));
   }
 
   return (

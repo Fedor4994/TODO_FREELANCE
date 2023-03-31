@@ -1,42 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as S from "./styles";
+import { useSelector } from "react-redux";
+import { selectCategories } from "../../Redux/categories/categories-selectors";
+import { useAppDispatch } from "../../Redux/store";
+import { fetchCategories } from "../../Redux/categories/categories-operations";
+import { addTodo } from "../../Redux/todos/todos-operations";
 
-const AddModal: React.FC = () => {
-  const categList = [
-    {
-      id: 0,
-      name: "None",
-      color: "#afafaf",
-    },
-    {
-      id: 1,
-      name: "Home",
-      color: "#FF9C9C",
-    },
-    { id: 2, name: "School", color: "#FFD79C" },
-    {
-      id: 3,
-      name: "Shopping list",
-      color: "#9CD0FF",
-    },
-  ];
+const AddModal = ({
+  modalHandler,
+  existedCategorieId,
+}: {
+  modalHandler: (isOpen: boolean) => void;
+  existedCategorieId?: string;
+}) => {
+  const dispatch = useAppDispatch();
+
+  const categList = useSelector(selectCategories);
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const [taskName, setTaskName] = useState("");
+  const [taskCategorie, setTaskCategorie] = useState(
+    existedCategorieId || categList[0]?._id
+  );
 
   function handleTyping(event: React.ChangeEvent<HTMLInputElement>) {
     setTaskName(event.target.value);
   }
 
   function handleCancel() {
-    console.log("cancel");
+    modalHandler(false);
   }
 
   function handleAdd() {
-    console.log("add task");
+    dispatch(addTodo({ title: taskName, categorieId: taskCategorie }));
+    modalHandler(false);
   }
 
-  function handleChange() {
-    console.log("change category");
+  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    setTaskCategorie(e.target.value);
   }
 
   return (
@@ -48,17 +52,23 @@ const AddModal: React.FC = () => {
           onChange={handleTyping}
           value={taskName}
         />
-        <S.Text>Select a categorie</S.Text>
-        <S.Select id="select" onChange={handleChange}>
-          {categList.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </S.Select>
+        {!existedCategorieId && (
+          <>
+            <S.Text>Select a categorie</S.Text>
+            <S.Select id="select" onChange={handleChange}>
+              {categList.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </S.Select>
+          </>
+        )}
         <S.Buttons>
           <S.CancelButton onClick={handleCancel}>Cancel</S.CancelButton>
-          <S.DeletButton onClick={handleAdd}>Add</S.DeletButton>
+          <S.DeletButton disabled={!taskName} onClick={handleAdd}>
+            Add
+          </S.DeletButton>
         </S.Buttons>
       </S.Container>
     </S.Background>

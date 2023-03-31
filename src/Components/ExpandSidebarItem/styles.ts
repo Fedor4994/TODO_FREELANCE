@@ -99,6 +99,7 @@ export const AddArea = styled.div`
   display: flex;
   align-items: center;
   background: #f5f5f5;
+  cursor: pointer;
 `;
 
 export const AddText = styled.p`

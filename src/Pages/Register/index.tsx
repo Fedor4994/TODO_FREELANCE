@@ -4,25 +4,27 @@ import Logo from "../../Img/Logo.png";
 import { Link } from "react-router-dom";
 import { useAppDispatch } from "../../Redux/store";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
 import { selectIsLoading } from "../../Redux/auth/auth-selectors";
-import { login } from "../../Redux/auth/auth-operations";
+import { useSelector } from "react-redux";
+import { register } from "../../Redux/auth/auth-operations";
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   const dispatch = useAppDispatch();
-  const notify = () => toast.error("Incorrect email or password");
+  const notify = () => toast.error("A user with the same email already exists");
   const isLoading = useSelector(selectIsLoading);
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+  function handleRegister(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    dispatch(login({ email, password })).then((data) => {
+    dispatch(register({ name, email, password })).then((data) => {
       if (data.meta.requestStatus === "rejected") {
+        console.log("aboba");
         notify();
-        setPassword("");
+        setEmail("");
       }
     });
   }
@@ -30,7 +32,9 @@ const Login: React.FC = () => {
   function handleEmail(event: React.ChangeEvent<HTMLInputElement>) {
     setEmail(event.target.value);
   }
-
+  function handleName(event: React.ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
   function handlePassword(event: React.ChangeEvent<HTMLInputElement>) {
     setPassword(event.target.value);
   }
@@ -43,10 +47,18 @@ const Login: React.FC = () => {
       <S.RightSide>
         <S.Title>Welcome to Tasker</S.Title>
         <S.Subtitle>
-          Please, insert your informations to access your tasks.
+          Please, create your account to access your tasks.
         </S.Subtitle>
         {isLoading && <S.Subtitle>LOADING...</S.Subtitle>}
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleRegister}>
+          <S.FieldName>Name</S.FieldName>
+          <S.InputField
+            value={name}
+            id="name"
+            onChange={handleName}
+            placeholder="Insert your name"
+            required
+          ></S.InputField>
           <S.FieldName>Email</S.FieldName>
           <S.InputField
             value={email}
@@ -66,15 +78,15 @@ const Login: React.FC = () => {
             required
           ></S.InputField>
 
-          <S.SignIn>Sign In</S.SignIn>
+          <S.SignIn>Sign Up</S.SignIn>
         </form>
 
         <S.Subtitle>
-          Don't have an account? <Link to="/register">Sign Up</Link>
+          Already have an account? <Link to="/login">Sign In</Link>
         </S.Subtitle>
       </S.RightSide>
     </S.Page>
   );
 };
 
-export default Login;
+export default Register;

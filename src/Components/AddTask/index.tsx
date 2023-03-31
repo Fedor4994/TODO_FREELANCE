@@ -1,10 +1,9 @@
-import React from "react";
 import * as S from "./styles";
 import Add from "../../Img/add.svg";
 
-const AddTask: React.FC = () => {
+const AddTask = ({ onClick }: { onClick: (isOpen: boolean) => void }) => {
   function handleClick() {
-    console.log(123);
+    onClick(true);
   }
 
   return (
